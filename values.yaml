@@ -1,0 +1,93 @@
+provisionDataStore:
+  postgresql:
+    enabled: true
+
+  redis:
+    enabled: true
+
+redis:
+  cluster:
+    enabled: false
+  metrics:
+    enabled: true
+    targetServiceAnnotations:
+      prometheus.io/path: "/metrics"
+      prometheus.io/port: "9121"
+      prometheus.io/scrape: "true"
+  persistence:
+    enabled: false
+  usePassword: false
+
+config:
+  postgresql_client_create_database_name: discourse_application
+
+  postgresql_client_create_database_username: bn_discourse
+  postgresql_client_create_database_password: bitnami1
+  discourse_postgresql_username: bn_discourse
+  discourse_postgresql_password: bitnami1
+
+
+
+## Persistent Volume Storage configuration.
+persistence:
+  ## Enable persistence using Persistent Volume Claims.
+  enabled: true
+
+  storageClassName: gp2
+  accessModes: ReadWriteOnce
+  ## Persistent Volume Storage Size.
+  ##
+  size: 8Gi
+
+## Configuration values for the Discourse web container
+##
+web:
+  image:
+    repository: bitnami/discourse
+    tag: 1.9.7
+    imagePullPolicy: IfNotPresent
+
+  service:
+    annotations: {}
+    webPort: 3000
+    probePath: /srv/status
+
+  ingress:
+    enabled: true
+    # Used to create Ingress record (should used with service.type: ClusterIP).
+    hosts:
+      - discourse.local
+
+    annotations: {}
+      # kubernetes.io/ingress.class: nginx
+      # kubernetes.io/tls-acme: "true"
+    tls:
+      # Secrets must be manually created in the namespace.
+      # - secretName: chart-example-tls
+      #   hosts:
+      #     - chart-example.local
+
+## Configuration values for the Discourse SideKiq container
+##
+admin:
+  image:
+    repository: bitnami/discourse
+    tag: 1.9.7
+    imagePullPolicy: IfNotPresent
+
+  ingress:
+
+    enabled: false
+    hosts:
+      - discourse-admin.local
+
+  service:
+    annotations: {}
+      # kubernetes.io/ingress.class: nginx
+      # kubernetes.io/tls-acme: "true"
+    tls:
+      # Secrets must be manually created in the namespace.
+      # - secretName: chart-example-tls
+      #   hosts:
+      #     - chart-example.local
+
